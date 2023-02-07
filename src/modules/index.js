@@ -11,16 +11,19 @@ loadMore.addEventListener("click", moreImages);
 
 function handleSubmit(event){
 	event.preventDefault();
-	if (event.target[0].value === "") {
-		Notiflix.Notify.failure("Please add the any searched word!");
-	  } else{
+	if (event.target[0].value == "") {
+		return Notiflix.Notify.failure("Please add the any searched word!");
+	  } else if(event.target[0].value != searchedImage){
 		searchedImage = event.target[0].value;
-		returnFetch(searchedImage).then(getPromise).catch(newError);  
+		returnFetch(searchedImage).then(getPromise).catch(newError);
+		gallery.innerHTML = '';
 		event.currentTarget.reset();
+	  } else{
+		
 	  }
 }	
 
-function getPromise(event){
+async function getPromise(event){
 	let markup = ``;
 	if (event.total == 0){
 		Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
@@ -28,7 +31,7 @@ function getPromise(event){
 		loadMore.style.display = 'none';
 		Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
 		} else{
-		markup = createCard(event.hits);
+		markup = await createCard(event.hits);
 		gallery.innerHTML += markup;
 		loadMore.style.display = 'block';
 	}
