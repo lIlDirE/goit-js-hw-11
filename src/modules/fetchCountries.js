@@ -1,5 +1,5 @@
-BASE_URL = `https://pixabay.com/api/?key=33366333-0003f8d7ddc57df9984e9b7db&q=`;
-PROPERTIES = `&image_type=photo&pretty=true+&per_page=40`;
+const BASE_URL = `https://pixabay.com/api/?key=33366333-0003f8d7ddc57df9984e9b7db&q=`;
+const PROPERTIES = `&image_type=photo&pretty=true+&per_page=40`;
 let counter = 0;
 let previousRequest;
 
