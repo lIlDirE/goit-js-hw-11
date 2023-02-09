@@ -9,29 +9,28 @@ let searchedImage = '';
 inputForm.addEventListener("submit", handleSubmit);
 loadMore.addEventListener("click", moreImages);
 
-function handleSubmit(event){
+async function handleSubmit(event){
 	event.preventDefault();
 	if (event.target[0].value == "") {
 		return Notiflix.Notify.failure("Please add the any searched word!");
-	  } else if(event.target[0].value != searchedImage){
-		searchedImage = event.target[0].value;
-		returnFetch(searchedImage).then(getPromise).catch(newError);
-		gallery.innerHTML = '';
+	  } else {
+		searchedImage = event.target[0].value.trim(); // если записать его перед if, поиск будет работать не корректно для кнопки loadMore если пользователь пойдет искать пустую строку
 		event.currentTarget.reset();
-	  } else{
-		
+		gallery.innerHTML = '';
+		const hitsPromise = await returnFetch(searchedImage);
+		getPromise(hitsPromise);
 	  }
 }	
 
-async function getPromise(event){
+function getPromise(event){
 	let markup = ``;
-	if (event.total == 0){
+	if (event.length == 0){
 		Notiflix.Notify.failure("Sorry, there are no images matching your search query. Please try again.");
-	} else if(event.hits.length < 40){
+	} else if(event.length < 40){
 		loadMore.style.display = 'none';
 		Notiflix.Notify.warning("We're sorry, but you've reached the end of search results.");
-		} else{
-		markup = await createCard(event.hits);
+		} else {
+		markup = createCard(event);
 		gallery.innerHTML += markup;
 		loadMore.style.display = 'block';
 	}
@@ -47,9 +46,9 @@ function moreImages(){
 
 function createCard(arr = []) {
 	return arr.map(
-		({previewURL, likes, views, comments, downloads}) =>
+		({previewURL, tags, likes, views, comments, downloads}) =>
 	`<div class="photo-card">
-		<img src="${previewURL}" alt="" loading="lazy" />
+		<img src="${previewURL}" alt="${tags}" loading="lazy" />
 		<div class="info">
 			<p class="info-item">
 			<b>Likes ${likes}</b>
